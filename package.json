@@ -1,0 +1,27 @@
+{
+  "name": "projeto19-drivencare",
+  "version": "1.0.0",
+  "description": "O objetivo deste projeto é desenvolver uma plataforma de agendamento de consultas médicas que permita que os pacientes agendem consultas com médicos de diferentes especialidades, escolhendo a data e horário disponíveis para cada médico. Os médicos poderão visualizar as consultas agendadas e confirmar ou cancelar cada uma delas. A plataforma também permitirá que os pacientes e médicos visualizem um histórico das consultas agendadas e realizadas.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edcampossouza/projeto19-drivencare.git"
+  },
+  "author": "edcampossouza@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edcampossouza/projeto19-drivencare/issues"
+  },
+  "homepage": "https://github.com/edcampossouza/projeto19-drivencare#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "joi": "^17.9.1",
+    "pg": "^8.10.0"
+  }
+}
