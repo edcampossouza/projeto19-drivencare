@@ -1,5 +1,8 @@
-import joi from "joi";
+import Joi from "joi";
+import joiDate from "@joi/date";
 import PersonSchema from "./Person.js";
+
+const joi = Joi.extend(joiDate);
 
 const WorkWeekSchema = joi.object({
   sunday: joi.boolean().required(),
@@ -16,9 +19,8 @@ const WorkHoursSchema = joi.object({
   end: joi.date().format("HH:mm").required(),
 });
 
-export default joi.object({
-  ...PersonSchema,
-  city: joi.string(),
+export default PersonSchema.keys({
+  city: joi.string().required(),
   workHours: WorkHoursSchema,
   workWeek: WorkWeekSchema,
 });
