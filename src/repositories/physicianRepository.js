@@ -1,16 +1,14 @@
 import connectionDb from "../config/database.js";
 import { buildWhereClause } from "../util/query.js";
-async function findByEmail(email) {
-  return await connectionDb.query(
-    `    
-    SELECT * FROM physician WHERE email=$1
-  `,
-    [email]
-  );
-}
 
 async function findById(id) {
   const res = await find({ id });
+  if (res.length === 0) return null;
+  return res[0];
+}
+
+async function findByEmail(email) {
+  const res = await find({ email, includePassHash: true });
   if (res.length === 0) return null;
   return res[0];
 }
@@ -19,10 +17,17 @@ async function getAll() {
   return await find({});
 }
 
-async function find({ id }) {
+async function find({ id, email, includePassHash }) {
   const conditions = [];
   if (id) {
     conditions.push({ column: "physician.id", operator: "=", variable: id });
+  }
+  if (email) {
+    conditions.push({
+      column: "physician.email",
+      operator: "=",
+      variable: email,
+    });
   }
 
   const { str, varArray } = buildWhereClause(conditions);
@@ -47,6 +52,7 @@ async function find({ id }) {
         'end', date_trunc('minute', workday_end)
       ),
       'specialties', json_agg(json_build_object('id', specialty.id, 'name',specialty.name))
+      ${includePassHash ? ",'password', physician.password" : ''}
 
       
       

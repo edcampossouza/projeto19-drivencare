@@ -20,6 +20,17 @@ async function create(req, res) {
   }
 }
 
+async function signin(req, res, next) {
+  const { email, password } = req.body;
+  try {
+    const token = await physicianService.signin({ email, password });
+    return res.send(token);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
 async function get(req, res) {
   const { id } = req.params;
 
@@ -59,4 +70,5 @@ export default {
   get,
   getAll,
   getBySpecialty,
+  signin,
 };
