@@ -1,6 +1,6 @@
 import { Router } from "express";
 import physicianController from "../controllers/physicianController.js";
-import { validateSchema } from "../middlewares/authMiddleware.js";
+import { validateSchema } from "../middlewares/schemaValidationMiddleware.js";
 import PhysicianSchema from "../schemas/Physician.js";
 
 const physicianRouter = Router();
