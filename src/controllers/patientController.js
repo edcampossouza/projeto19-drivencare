@@ -12,4 +12,14 @@ async function signup(req, res, next) {
   }
 }
 
-export default { signup };
+async function signin(req, res, next) {
+  const { email, password } = req.body;
+  try {
+    const token = await patientService.signin({ email, password });
+    return res.status(200).send(token);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+export default { signup, signin };
