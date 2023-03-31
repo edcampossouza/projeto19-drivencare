@@ -1,5 +1,5 @@
 import connectionDb from "../config/database.js";
-
+import { buildWhereClause } from "../util/query.js";
 async function findByEmail(email) {
   return await connectionDb.query(
     `    
@@ -10,17 +10,22 @@ async function findByEmail(email) {
 }
 
 async function findById(id) {
-  const res = await find(id);
+  const res = await find({ id });
   if (res.length === 0) return null;
   return res[0];
 }
 
 async function getAll() {
-  return await find();
+  return await find({});
 }
 
-async function find(id) {
-  const idFilter = id ? ` WHERE physician.id=$1 ` : "";
+async function find({ id }) {
+  const conditions = [];
+  if (id) {
+    conditions.push({ column: "physician.id", operator: "=", variable: id });
+  }
+
+  const { str, varArray } = buildWhereClause(conditions);
   const result = await connectionDb.query(
     `
     SELECT json_build_object(
@@ -52,7 +57,7 @@ async function find(id) {
     LEFT JOIN physician_specialty ON physician_specialty.physician_id = physician.id
     LEFT JOIN specialty on physician_specialty.specialty_id = specialty.id
 
-    ${idFilter}
+    ${str}
 
     GROUP BY physician.id, physician.name, email, 
     workweek.sunday,
@@ -63,7 +68,7 @@ async function find(id) {
     workweek.friday,
     workweek.saturday
     `,
-    id ? [id] : undefined
+    varArray
   );
   result.rows.forEach((row) => {
     row.physician.specialties = row.physician.specialties.filter(
