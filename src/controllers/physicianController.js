@@ -16,7 +16,7 @@ async function create(req, res) {
     else return res.status(409).send("Email já está cadastrado");
   } catch (err) {
     console.log(err);
-    return res.sendStatus(500);
+    next(err);
   }
 }
 

@@ -12,7 +12,7 @@ const { JWT_SECRET_PHYSICIAN } = process.env;
 
 async function create({ name, email, password, city, workHours, workWeek }) {
   const { rowCount } = await physicianRepository.findByEmail(email);
-  if (rowCount) return false;
+  if (rowCount) throw errors.duplicatedEmailError(email);
   const hashPassword = await bcrypt.hash(password, 10);
   await physicianRepository.create({
     name,
@@ -22,7 +22,6 @@ async function create({ name, email, password, city, workHours, workWeek }) {
     workHours,
     workWeek,
   });
-  return true;
 }
 
 async function get(id) {
