@@ -20,6 +20,12 @@ async function create({ name, email, password, city, workHours, workWeek }) {
   return true;
 }
 
+async function get(id) {
+  const physician = await physicianRepository.findById(id);
+  return physician;
+}
+
 export default {
   create,
+  get,
 };

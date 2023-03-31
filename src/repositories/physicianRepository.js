@@ -9,6 +9,57 @@ async function findByEmail(email) {
   );
 }
 
+async function findById(id) {
+  const result = await connectionDb.query(
+    `
+    SELECT json_build_object(
+      'id', physician.id,
+      'name', physician.name,
+      'email', email,
+      'city', physician.city,
+      'workWeek', json_build_object(
+        'sunday', workweek.sunday,
+        'monday', workweek.monday,
+        'tuesday', workweek.tuesday,
+        'wednesday', workweek.wednesday,
+        'thursday', workweek.thursday,
+        'friday', workweek.friday,
+        'saturday', workweek.saturday
+      ),
+      'workHours', json_build_object(
+        'begin', date_trunc('minute', workday_begin),
+        'end', date_trunc('minute', workday_end)
+      ),
+      'specialties', json_agg(json_build_object('id', specialty.id, 'name',specialty.name))
+
+      
+      
+    ) as physician
+    
+    FROM physician 
+    JOIN workweek on workweek.physician_id = physician.id
+    LEFT JOIN physician_specialty ON physician_specialty.physician_id = physician.id
+    LEFT JOIN specialty on physician_specialty.specialty_id = specialty.id
+
+    WHERE physician.id=$1
+    GROUP BY physician.id, physician.name, email, 
+    workweek.sunday,
+    workweek.monday,
+    workweek.tuesday,
+    workweek.wednesday,
+    workweek.thursday,
+    workweek.friday,
+    workweek.saturday
+    `,
+    [id]
+  );
+  if (result.rowCount === 0) return null;
+  const physician = result.rows[0].physician;
+  physician.specialties = physician.specialties.filter((s) => s.id !== null);
+  console.log(physician);
+  return physician;
+}
+
 async function create({ name, email, password, city, workHours, workWeek }) {
   const result = await connectionDb.query(
     `
@@ -59,5 +110,6 @@ async function create({ name, email, password, city, workHours, workWeek }) {
 
 export default {
   findByEmail,
+  findById,
   create,
 };

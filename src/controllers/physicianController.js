@@ -20,6 +20,20 @@ async function create(req, res) {
   }
 }
 
+async function get(req, res) {
+  const { id } = req.params;
+
+  try {
+    const result = await physicianService.get(id);
+    if (result) return res.status(200).send(result);
+    else return res.status(404).send("Não encontrado");
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(500);
+  }
+}
+
 export default {
   create,
+  get,
 };
