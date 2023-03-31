@@ -10,7 +10,15 @@ function unauthorizedError() {
     message: "You must be signed in to continue",
   };
 }
+function duplicatedEmailError(email) {
+  return {
+    name: "DuplicatedEmailError",
+    message: "There is already a user with given email",
+    email,
+  };
+}
 export default {
   invalidCredentialsError,
   unauthorizedError,
+  duplicatedEmailError,
 };
