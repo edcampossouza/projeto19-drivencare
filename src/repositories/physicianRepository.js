@@ -10,6 +10,17 @@ async function findByEmail(email) {
 }
 
 async function findById(id) {
+  const res = await find(id);
+  if (res.length === 0) return null;
+  return res[0];
+}
+
+async function getAll() {
+  return await find();
+}
+
+async function find(id) {
+  const idFilter = id ? ` WHERE physician.id=$1 ` : "";
   const result = await connectionDb.query(
     `
     SELECT json_build_object(
@@ -41,7 +52,8 @@ async function findById(id) {
     LEFT JOIN physician_specialty ON physician_specialty.physician_id = physician.id
     LEFT JOIN specialty on physician_specialty.specialty_id = specialty.id
 
-    WHERE physician.id=$1
+    ${idFilter}
+
     GROUP BY physician.id, physician.name, email, 
     workweek.sunday,
     workweek.monday,
@@ -51,13 +63,14 @@ async function findById(id) {
     workweek.friday,
     workweek.saturday
     `,
-    [id]
+    id ? [id] : undefined
   );
-  if (result.rowCount === 0) return null;
-  const physician = result.rows[0].physician;
-  physician.specialties = physician.specialties.filter((s) => s.id !== null);
-  console.log(physician);
-  return physician;
+  result.rows.forEach((row) => {
+    row.physician.specialties = row.physician.specialties.filter(
+      (s) => s.id !== null
+    );
+  });
+  return result.rows;
 }
 
 async function create({ name, email, password, city, workHours, workWeek }) {
@@ -111,5 +124,6 @@ async function create({ name, email, password, city, workHours, workWeek }) {
 export default {
   findByEmail,
   findById,
+  getAll,
   create,
 };

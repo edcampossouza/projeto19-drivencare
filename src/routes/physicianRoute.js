@@ -12,5 +12,7 @@ physicianRouter.post(
 );
 
 physicianRouter.get("/:id", physicianController.get);
+physicianRouter.get("/", physicianController.getAll);
+physicianRouter.get("/specialties", physicianController.getBySpecialty);
 
 export default physicianRouter;

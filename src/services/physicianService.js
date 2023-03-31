@@ -25,7 +25,25 @@ async function get(id) {
   return physician;
 }
 
+async function getAll() {
+  const physicians = await physicianRepository.getAll();
+  return physicians;
+}
+
+async function getBySpecialty(req, res) {
+  const { searchKey } = req.query;
+  try {
+    const results = await physicianService.getBySpecialty(searchKey);
+    return res.status(200).send(results);
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(500);
+  }
+}
+
 export default {
   create,
   get,
+  getAll,
+  getBySpecialty,
 };
