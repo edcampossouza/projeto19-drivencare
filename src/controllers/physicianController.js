@@ -61,7 +61,23 @@ async function getBySpecialty(req, res) {
     return res.status(200).send(results);
   } catch (err) {
     console.log(err);
-    return res.sendStatus(500);
+    next(err);
+  }
+}
+
+async function getVacancies(req, res, next) {
+  const { dayFrom, dayTo, specialty } = req.query;
+
+  try {
+    const response = await physicianService.getVacancies({
+      dayFrom,
+      dayTo,
+      specialty,
+    });
+    return res.send(response);
+  } catch (error) {
+    console.log(err);
+    next(err);
   }
 }
 
@@ -71,4 +87,5 @@ export default {
   getAll,
   getBySpecialty,
   signin,
+  getVacancies,
 };

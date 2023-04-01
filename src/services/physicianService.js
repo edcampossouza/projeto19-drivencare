@@ -55,10 +55,15 @@ async function signin({ email, password }) {
   return token;
 }
 
+async function getVacancies({ dayFrom, dayTo, specialty }) {
+  return { dayFrom, dayTo, specialty };
+}
+
 export default {
   create,
   get,
   getAll,
   getBySpecialty,
   signin,
+  getVacancies,
 };

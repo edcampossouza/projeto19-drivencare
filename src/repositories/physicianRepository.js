@@ -52,7 +52,7 @@ async function find({ id, email, includePassHash }) {
         'end', date_trunc('minute', workday_end)
       ),
       'specialties', json_agg(json_build_object('id', specialty.id, 'name',specialty.name))
-      ${includePassHash ? ",'password', physician.password" : ''}
+      ${includePassHash ? ",'password', physician.password" : ""}
 
       
       
@@ -132,9 +132,12 @@ async function create({ name, email, password, city, workHours, workWeek }) {
   }
 }
 
+async function getVacancies() {}
+
 export default {
   findByEmail,
   findById,
   getAll,
   create,
+  getVacancies,
 };
