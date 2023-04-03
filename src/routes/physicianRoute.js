@@ -44,6 +44,12 @@ physicianRouter.post(
   physicianController.bookAppointment
 );
 
+physicianRouter.post(
+  "/appointments/:id/cancel",
+  physicianAuth,
+  physicianController.cancelAppointment
+);
+
 physicianRouter.get("/:id", physicianController.get);
 
 physicianRouter.get("/", physicianController.getAll);

@@ -202,6 +202,31 @@ async function bookAppointment({
   );
 }
 
+async function getAppointmentById(id) {
+  const results = await connectionDb.query(
+    `
+    SELECT *
+    FROM appointment
+    WHERE id = $1
+  `,
+    [id]
+  );
+
+  if (results.rowCount) return results.rows[0];
+  return null;
+}
+
+async function cancelAppointment(appointment_id) {
+  await connectionDb.query(
+    `
+    UPDATE appointment
+    SET canceled_at = now()
+    WHERE id = $1
+    `,
+    [appointment_id]
+  );
+}
+
 export default {
   findByEmail,
   findById,
@@ -211,4 +236,6 @@ export default {
   getBySpecialty,
   addSpecialty,
   bookAppointment,
+  getAppointmentById,
+  cancelAppointment,
 };

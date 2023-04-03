@@ -1,7 +1,7 @@
-function invalidCredentialsError() {
+function invalidCredentialsError(message) {
   return {
     name: "InvalidCredentialsError",
-    message: "Email or password are incorrect",
+    message: message || "Email or password are incorrect",
   };
 }
 function unauthorizedError() {

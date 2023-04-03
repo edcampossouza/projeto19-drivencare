@@ -111,6 +111,18 @@ async function bookAppointment(req, res, next) {
   }
 }
 
+async function cancelAppointment(req, res, next) {
+  const { id: physician_id } = res.locals.physician;
+  const { id: appointment_id } = req.params;
+  try {
+    await physicianService.cancelAppointment({ physician_id, appointment_id });
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
 export default {
   create,
   get,
@@ -120,4 +132,5 @@ export default {
   getVacancies,
   postSpecialty,
   bookAppointment,
+  cancelAppointment,
 };

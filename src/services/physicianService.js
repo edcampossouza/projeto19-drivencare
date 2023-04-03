@@ -191,6 +191,16 @@ async function bookAppointment({
   }
 }
 
+async function cancelAppointment({ physician_id, appointment_id }) {
+  const appointment = await physicianRepository.getAppointmentById(
+    appointment_id
+  );
+  if (!appointment) throw errors.notFoundError(`Invalid appointment id`);
+  if (appointment.physician_id !== physician_id)
+    throw errors.invalidCredentialsError(`Invalid credentials`);
+  await physicianRepository.cancelAppointment(appointment_id);
+}
+
 export default {
   create,
   get,
@@ -200,4 +210,5 @@ export default {
   getVacancies,
   postSpecialty,
   bookAppointment,
+  cancelAppointment,
 };
