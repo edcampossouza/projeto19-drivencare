@@ -92,6 +92,25 @@ async function postSpecialty(req, res, next) {
   }
 }
 
+async function bookAppointment(req, res, next) {
+  const { physician_id, date, begin, end, specialty_id } = req.body;
+  const { id: patient_id } = res.locals.user;
+  try {
+    await physicianService.bookAppointment({
+      physician_id,
+      date,
+      begin,
+      end,
+      patient_id,
+      specialty_id,
+    });
+    return res.sendStatus(201);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
 export default {
   create,
   get,
@@ -100,4 +119,5 @@ export default {
   signin,
   getVacancies,
   postSpecialty,
+  bookAppointment,
 };

@@ -40,6 +40,7 @@ export async function patientAuth(req, res, next) {
     }
     console.log(decoded);
     if (decoded) {
+      res.locals.user = decoded;
       next();
     } else {
       throw errors.unauthorizedError();

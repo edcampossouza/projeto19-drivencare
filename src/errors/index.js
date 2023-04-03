@@ -23,9 +23,23 @@ function dateError(message) {
     message,
   };
 }
+function conflictError(message) {
+  return {
+    name: "ConflictError",
+    message,
+  };
+}
+function notFoundError(message) {
+  return {
+    name: "NotFoundError",
+    message,
+  };
+}
 export default {
   invalidCredentialsError,
   unauthorizedError,
   duplicatedEmailError,
   dateError,
+  conflictError,
+  notFoundError,
 };

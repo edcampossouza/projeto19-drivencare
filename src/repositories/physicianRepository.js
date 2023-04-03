@@ -57,8 +57,8 @@ async function find({ id, email, includePassHash, specialty }) {
         'saturday', workweek.saturday
       ),
       'workHours', json_build_object(
-        'begin', date_trunc('minute', workday_begin),
-        'end', date_trunc('minute', workday_end)
+        'begin', to_char(workday_begin, 'hh24:mi'),
+        'end', to_char(workday_end, 'hh24:mi')
       ),
       'specialties', json_agg(json_build_object('id', specialty.id, 'name',specialty.name))
       ${includePassHash ? ",'password', physician.password" : ""}
@@ -148,7 +148,7 @@ async function getPhysicianHours({ dayFrom, dayTo, specialty }) {
       'id', physician.id,
       'name', physician.name,
       "date", json_build_object(
-        'hours', json_agg(json_build_object('begins', appointment.begins_at, 'ends',appointment.ends_at))
+        'hours', json_agg(json_build_object('begins', to_char(appointment.begins_at, 'hh24:mi'), 'ends',to_char(appointment.ends_at, 'hh24:mi')))
       ) 
       ) as date
     FROM
@@ -185,6 +185,23 @@ async function addSpecialty({ physician_id, specialty_id }) {
   );
 }
 
+async function bookAppointment({
+  physician_id,
+  date,
+  begin,
+  end,
+  patient_id,
+  specialty_id,
+}) {
+  await connectionDb.query(
+    `
+      INSERT INTO appointment (patient_id, physician_id, specialty_id, date, begins_at, ends_at)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `,
+    [patient_id, physician_id, specialty_id, date, begin, end]
+  );
+}
+
 export default {
   findByEmail,
   findById,
@@ -193,4 +210,5 @@ export default {
   getPhysicianHours,
   getBySpecialty,
   addSpecialty,
+  bookAppointment,
 };

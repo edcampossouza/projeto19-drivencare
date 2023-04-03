@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import dayjs from "dayjs";
 
 import physicianRepository from "../repositories/physicianRepository.js";
+import patientRepository from "../repositories/patientRepository.js";
 import errors from "../errors/index.js";
 import { integerToDateString, sliceHours } from "../util/dates.js";
 
@@ -115,6 +116,81 @@ async function postSpecialty({ physician_id, specialty_id }) {
   await physicianRepository.addSpecialty({ physician_id, specialty_id });
 }
 
+async function bookAppointment({
+  physician_id,
+  date,
+  begin,
+  end,
+  patient_id,
+  specialty_id,
+}) {
+  if (begin >= end)
+    throw errors.dateError(`Invalide appointment time: ${begin} to ${end}`);
+
+  // patient availability
+  const patientAvailability = await patientRepository.isAvailable({
+    physician_id,
+    date,
+    begin,
+    end,
+    patient_id,
+  });
+
+  if (patientAvailability)
+    throw errors.conflictError(
+      `Patient has a conflicting appointment: ${JSON.stringify(
+        patientAvailability[0]
+      )}`
+    );
+
+  // physician availability
+  const physResult = await physicianRepository.findById(physician_id);
+  if (!physResult)
+    throw errors.notFoundError(`Invalid physician id: ${physician_id}`);
+  const physician = physResult.physician;
+
+  const dateJS = dayjs(date);
+  const dowString = integerToDateString(dateJS.day());
+  if (!physician.workWeek[dowString])
+    throw errors.conflictError(
+      `${physician.name} does not work on ${dowString}s`
+    );
+
+  const { workHours } = physician;
+  if (begin < workHours.begin || end > workHours.end) {
+    throw errors.conflictError(
+      `${physician.name} only works from ${workHours.begin} to ${workHours.end}`
+    );
+  }
+  if (!physician.specialties.map((s) => s.id).includes(specialty_id)) {
+    throw errors.conflictError(`${physician.name} dos not have that specialty`);
+  }
+
+  const _vacancies = await getVacancies({
+    dayFrom: date,
+    dayTo: date,
+    specialty: specialty_id,
+  });
+  const vacancyDate = _vacancies[physician.id].dates.find((x) => x[date]);
+  console.log(vacancyDate[date]);
+  if (
+    vacancyDate[date].find(
+      (interval) => interval.begins <= begin && interval.ends >= end
+    )
+  ) {
+    await physicianRepository.bookAppointment({
+      physician_id,
+      date,
+      begin,
+      end,
+      patient_id,
+      specialty_id,
+    });
+  } else {
+    throw errors.conflictError(`Physician not available at this time`);
+  }
+}
+
 export default {
   create,
   get,
@@ -123,4 +199,5 @@ export default {
   signin,
   getVacancies,
   postSpecialty,
+  bookAppointment,
 };
