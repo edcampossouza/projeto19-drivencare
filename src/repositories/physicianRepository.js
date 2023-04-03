@@ -17,7 +17,14 @@ async function getAll() {
   return await find({});
 }
 
-async function find({ id, email, includePassHash, specialty }) {
+async function find({
+  id,
+  email,
+  includePassHash,
+  specialty,
+  location,
+  name,
+}) {
   const conditions = [];
   if (id) {
     conditions.push({ column: "physician.id", operator: "=", variable: id });
@@ -33,9 +40,25 @@ async function find({ id, email, includePassHash, specialty }) {
 
   if (specialty) {
     conditions.push({
-      column: "specialty.id",
+      column: "specialty",
       operator: "=",
-      variable: specialty,
+      variable: `specialty`,
+    });
+  }
+
+  if (name) {
+    conditions.push({
+      column: "physician.name",
+      operator: "LIKE",
+      variable: `%${name}%`,
+    });
+  }
+
+  if (location) {
+    conditions.push({
+      column: "city",
+      operator: "LIKE",
+      variable: `%${location}%`,
     });
   }
 
@@ -243,6 +266,7 @@ export default {
   findById,
   getAll,
   create,
+  find,
   getPhysicianHours,
   getBySpecialty,
   addSpecialty,

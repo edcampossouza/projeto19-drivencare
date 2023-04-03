@@ -57,6 +57,7 @@ physicianRouter.post(
   physicianController.confirmAppointment
 );
 
+physicianRouter.get("/query", physicianController.query);
 
 physicianRouter.get("/:id", physicianController.get);
 

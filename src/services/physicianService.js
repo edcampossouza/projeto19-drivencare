@@ -37,6 +37,11 @@ async function getAll() {
   return physicians;
 }
 
+async function find({ name, location }) {
+  const physicians = await physicianRepository.find({ name, location });
+  return physicians;
+}
+
 // async function getBySpecialty(req, res) {
 //   const { searchKey } = req.query;
 //   try {
@@ -220,6 +225,7 @@ export default {
   create,
   get,
   getAll,
+  find,
   // getBySpecialty,
   signin,
   getVacancies,

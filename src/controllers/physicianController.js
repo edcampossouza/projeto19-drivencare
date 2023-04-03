@@ -53,6 +53,17 @@ async function getAll(_, res) {
   }
 }
 
+async function query(req, res) {
+  const { name, location } = req.query;
+  try {
+    const results = await physicianService.find({ name, location });
+    return res.status(200).send(results);
+  } catch (err) {
+    console.log(err);
+    return res.sendStatus(500);
+  }
+}
+
 async function getBySpecialty(req, res) {
   const { searchKey } = req.query;
   try {
@@ -145,4 +156,5 @@ export default {
   bookAppointment,
   cancelAppointment,
   confirmAppointment,
+  query,
 };
