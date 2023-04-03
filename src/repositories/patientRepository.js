@@ -44,4 +44,34 @@ async function isAvailable({ patient_id, date, begin, end }) {
   else return null;
 }
 
-export default { findByEmail, create, isAvailable };
+async function appointments(patient_id) {
+  return (
+    await connectionDb.query(
+      `
+    SELECT json_build_object(
+      'id', appointment.id,
+      'date', appointment.date,
+      'from', appointment.begins_at,
+      'to', appointment.ends_at,
+      'specialty', specialty.name,
+      'confirmed_at', date_trunc('minute', appointment.confirmed_at),
+      'physician', json_build_object(
+        'id', physician.id,
+        'name', physician.name
+      )
+    ) as appointment
+      
+    
+    FROM patient JOIN appointment on appointment.patient_id = patient.id
+    JOIN physician on physician.id = appointment.physician_id
+    JOIN specialty on specialty.id = appointment.specialty_id
+
+    WHERE patient.id = $1
+    AND canceled_at IS NULL
+  `,
+      [patient_id]
+    )
+  ).rows;
+}
+
+export default { findByEmail, create, isAvailable, appointments };

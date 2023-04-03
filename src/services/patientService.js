@@ -27,4 +27,8 @@ async function signin({ email, password }) {
   const token = jwt.sign(user, JWT_SECRET_PATIENT);
   return { token };
 }
-export default { create, signin };
+
+async function appointments(patient_id) {
+  return await patientRepository.appointments(patient_id);
+}
+export default { create, signin, appointments };

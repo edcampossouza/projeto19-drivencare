@@ -22,4 +22,16 @@ async function signin(req, res, next) {
     next(error);
   }
 }
-export default { signup, signin };
+
+async function appointment(_, res, next) {
+  const { id: patient_id } = res.locals.user;
+  try {
+    const result = await patientService.appointments(patient_id);
+    return res.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
+export default { signup, signin, appointment };
