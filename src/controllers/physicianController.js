@@ -1,6 +1,6 @@
 import physicianService from "../services/physicianService.js";
 
-async function create(req, res) {
+async function create(req, res, next) {
   const { name, email, password, city, workHours, workWeek } = req.body;
 
   try {
@@ -76,8 +76,20 @@ async function getVacancies(req, res, next) {
     });
     return res.send(response);
   } catch (error) {
-    console.log(err);
-    next(err);
+    console.log(error);
+    next(error);
+  }
+}
+
+async function postSpecialty(req, res, next) {
+  const { specialty_id } = req.body;
+  const { id: physician_id } = res.locals.physician;
+  try {
+    await physicianService.postSpecialty({ physician_id, specialty_id });
+    return res.sendStatus(201);
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 }
 
@@ -88,4 +100,5 @@ export default {
   getBySpecialty,
   signin,
   getVacancies,
+  postSpecialty,
 };

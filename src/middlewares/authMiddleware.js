@@ -17,6 +17,7 @@ export async function physicianAuth(req, res, next) {
     }
     console.log(decoded);
     if (decoded) {
+      res.locals.physician = decoded;
       next();
     } else {
       throw errors.unauthorizedError();

@@ -10,6 +10,18 @@ async function getAll(_, res, next) {
   }
 }
 
+async function create(req, res, next) {
+  const { name } = req.body;
+  try {
+    await specialtyService.create(name);
+    return res.sendStatus(201);
+  } catch (error) {
+    next(error);
+    console.log(error);
+  }
+}
+
 export default {
   getAll,
+  create,
 };

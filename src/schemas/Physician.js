@@ -19,6 +19,10 @@ const WorkHoursSchema = joi.object({
   end: joi.date().format("HH:mm").required(),
 });
 
+export const postSpecialtySchema = joi.object({
+  specialty_id: joi.number().integer().positive().required(),
+});
+
 export default PersonSchema.keys({
   city: joi.string().required(),
   workHours: WorkHoursSchema,

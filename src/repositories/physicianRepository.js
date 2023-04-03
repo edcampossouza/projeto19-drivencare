@@ -17,16 +17,25 @@ async function getAll() {
   return await find({});
 }
 
-async function find({ id, email, includePassHash }) {
+async function find({ id, email, includePassHash, specialty }) {
   const conditions = [];
   if (id) {
     conditions.push({ column: "physician.id", operator: "=", variable: id });
   }
+
   if (email) {
     conditions.push({
       column: "physician.email",
       operator: "=",
       variable: email,
+    });
+  }
+
+  if (specialty) {
+    conditions.push({
+      column: "specialty.id",
+      operator: "=",
+      variable: specialty,
     });
   }
 
@@ -132,12 +141,53 @@ async function create({ name, email, password, city, workHours, workWeek }) {
   }
 }
 
-async function getVacancies() {}
+async function getPhysicianHours({ dayFrom, dayTo, specialty }) {
+  const results = await connectionDb.query(
+    `
+    SELECT  json_build_object(
+      'id', physician.id,
+      'name', physician.name,
+      "date", json_build_object(
+        'hours', json_agg(json_build_object('begins', appointment.begins_at, 'ends',appointment.ends_at))
+      ) 
+      ) as date
+    FROM
+      physician JOIN physician_specialty ON physician_specialty.physician_id = physician.id
+      JOIN appointment on appointment.physician_id = physician.id
+    WHERE
+      physician_specialty.specialty_id = $1
+    AND 
+      (appointment.date BETWEEN $2 AND $3)
+    GROUP BY physician.id, physician.name, appointment.date
+
+  `,
+    [specialty, dayFrom, dayTo]
+  );
+  return results.rows;
+}
+
+async function getBySpecialty(specialty) {
+  const results = await find({ specialty });
+  return results;
+}
+
+async function addSpecialty({ physician_id, specialty_id }) {
+  console.log(physician_id, specialty_id)
+  await connectionDb.query(
+    `
+      INSERT INTO physician_specialty(physician_id, specialty_id)
+      VALUES ($1, $2)
+    `,
+    [physician_id, specialty_id]
+  );
+}
 
 export default {
   findByEmail,
   findById,
   getAll,
   create,
-  getVacancies,
+  getPhysicianHours,
+  getBySpecialty,
+  addSpecialty,
 };

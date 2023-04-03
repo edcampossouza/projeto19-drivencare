@@ -5,6 +5,17 @@ async function getAll() {
   return result.rows;
 }
 
+async function create(name) {
+  await connectionDb.query(
+    `
+    INSERT INTO specialty (name)
+    VALUES ($1)
+  `,
+    [name]
+  );
+}
+
 export default {
   getAll,
+  create,
 };

@@ -1,9 +1,10 @@
 import { Router } from "express";
 import physicianController from "../controllers/physicianController.js";
 import { validateSchema } from "../middlewares/schemaValidationMiddleware.js";
-import PhysicianSchema from "../schemas/Physician.js";
+import PhysicianSchema, { postSpecialtySchema } from "../schemas/Physician.js";
 import { signinSchema } from "../schemas/Person.js";
 import { vacanciesQuerySchema } from "../schemas/Appointment.js";
+import { patientAuth, physicianAuth } from "../middlewares/authMiddleware.js";
 
 const physicianRouter = Router();
 
@@ -21,8 +22,16 @@ physicianRouter.post(
 
 physicianRouter.get(
   "/vacancies",
+  patientAuth,
   validateSchema(vacanciesQuerySchema, { source: "query" }),
   physicianController.getVacancies
+);
+
+physicianRouter.post(
+  "/specialties",
+  physicianAuth,
+  validateSchema(postSpecialtySchema),
+  physicianController.postSpecialty
 );
 
 physicianRouter.get("/:id", physicianController.get);

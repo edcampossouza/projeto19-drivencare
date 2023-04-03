@@ -16,6 +16,11 @@ export function handleApplicationErrors(err, req, res, next) {
       message: err.message,
     });
   }
+  if (err.name === "DateError") {
+    return res.status(422).send({
+      message: err.message,
+    });
+  }
   return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
     error: "InternalServerError",
     message: "Internal Server Error",

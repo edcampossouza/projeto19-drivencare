@@ -17,8 +17,15 @@ function duplicatedEmailError(email) {
     email,
   };
 }
+function dateError(message) {
+  return {
+    name: "DateError",
+    message,
+  };
+}
 export default {
   invalidCredentialsError,
   unauthorizedError,
   duplicatedEmailError,
+  dateError,
 };
