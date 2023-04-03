@@ -158,7 +158,10 @@ async function getPhysicianHours({ dayFrom, dayTo, specialty }) {
       physician_specialty.specialty_id = $1
     AND 
       (appointment.date BETWEEN $2 AND $3)
-    GROUP BY physician.id, physician.name, appointment.date
+    AND 
+      (appointment.canceled_at is NULL)
+    GROUP BY physician.id, physician.name, appointment.date, begins_at
+    ORDER BY physician.id, appointment.date, begins_at
 
   `,
     [specialty, dayFrom, dayTo]
@@ -172,7 +175,7 @@ async function getBySpecialty(specialty) {
 }
 
 async function addSpecialty({ physician_id, specialty_id }) {
-  console.log(physician_id, specialty_id)
+  console.log(physician_id, specialty_id);
   await connectionDb.query(
     `
       INSERT INTO physician_specialty(physician_id, specialty_id)

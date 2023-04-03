@@ -38,7 +38,7 @@ CREATE TABLE "appointment" (
     "date" DATE NOT NULL,
     "begins_at" TIME NOT NULL,
     "ends_at" TIME NOT NULL,
-    "cancelled_at" TIMESTAMP DEFAULT NULL,
+    "canceled_at" TIMESTAMP DEFAULT NULL,
     "confirmed_at" TIMESTAMP DEFAULT NULL,
     CONSTRAINT "appointment_pk" PRIMARY KEY ("id")
 ) WITH (OIDS = FALSE);
