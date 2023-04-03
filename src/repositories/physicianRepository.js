@@ -227,6 +227,17 @@ async function cancelAppointment(appointment_id) {
   );
 }
 
+async function confirmAppointment(appointment_id) {
+  await connectionDb.query(
+    `
+    UPDATE appointment
+    SET confirmed_at = now()
+    WHERE id = $1
+    `,
+    [appointment_id]
+  );
+}
+
 export default {
   findByEmail,
   findById,
@@ -238,4 +249,5 @@ export default {
   bookAppointment,
   getAppointmentById,
   cancelAppointment,
+  confirmAppointment,
 };

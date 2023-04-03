@@ -198,7 +198,22 @@ async function cancelAppointment({ physician_id, appointment_id }) {
   if (!appointment) throw errors.notFoundError(`Invalid appointment id`);
   if (appointment.physician_id !== physician_id)
     throw errors.invalidCredentialsError(`Invalid credentials`);
+  if (appointment.confirmed_at)
+    throw errors.conflictError(`Can't cancel a confirmed appointment`);
   await physicianRepository.cancelAppointment(appointment_id);
+}
+
+async function confirmAppointment({ physician_id, appointment_id }) {
+  const appointment = await physicianRepository.getAppointmentById(
+    appointment_id
+  );
+  if (!appointment) throw errors.notFoundError(`Invalid appointment id`);
+  if (appointment.physician_id !== physician_id)
+    throw errors.invalidCredentialsError(`Invalid credentials`);
+  if (appointment.canceled_at)
+    throw errors.conflictError(`Can't confirm a canceled appointment`);
+
+  await physicianRepository.confirmAppointment(appointment_id);
 }
 
 export default {
@@ -211,4 +226,5 @@ export default {
   postSpecialty,
   bookAppointment,
   cancelAppointment,
+  confirmAppointment,
 };

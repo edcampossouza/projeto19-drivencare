@@ -122,6 +122,17 @@ async function cancelAppointment(req, res, next) {
     next(error);
   }
 }
+async function confirmAppointment(req, res, next) {
+  const { id: physician_id } = res.locals.physician;
+  const { id: appointment_id } = req.params;
+  try {
+    await physicianService.confirmAppointment({ physician_id, appointment_id });
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
 
 export default {
   create,
@@ -133,4 +144,5 @@ export default {
   postSpecialty,
   bookAppointment,
   cancelAppointment,
+  confirmAppointment,
 };
