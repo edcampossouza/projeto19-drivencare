@@ -221,6 +221,10 @@ async function confirmAppointment({ physician_id, appointment_id }) {
   await physicianRepository.confirmAppointment(appointment_id);
 }
 
+async function appointments(physician_id) {
+  return await physicianRepository.appointments(physician_id);
+}
+
 export default {
   create,
   get,
@@ -233,4 +237,5 @@ export default {
   bookAppointment,
   cancelAppointment,
   confirmAppointment,
+  appointments,
 };

@@ -261,6 +261,36 @@ async function confirmAppointment(appointment_id) {
   );
 }
 
+async function appointments(physician_id) {
+  return (
+    await connectionDb.query(
+      `
+    SELECT json_build_object(
+      'id', appointment.id,
+      'date', appointment.date,
+      'from', appointment.begins_at,
+      'to', appointment.ends_at,
+      'specialty', specialty.name,
+      'confirmed_at', date_trunc('minute', appointment.confirmed_at),
+      'patient', json_build_object(
+        'id', patient.id,
+        'name', patient.name
+      )
+    ) as appointment
+      
+    
+    FROM patient JOIN appointment on appointment.patient_id = patient.id
+    JOIN physician on physician.id = appointment.physician_id
+    JOIN specialty on specialty.id = appointment.specialty_id
+
+    WHERE physician.id = $1
+    AND canceled_at IS NULL
+  `,
+      [physician_id]
+    )
+  ).rows;
+}
+
 export default {
   findByEmail,
   findById,
@@ -274,4 +304,5 @@ export default {
   getAppointmentById,
   cancelAppointment,
   confirmAppointment,
+  appointments
 };

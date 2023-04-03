@@ -145,6 +145,18 @@ async function confirmAppointment(req, res, next) {
   }
 }
 
+async function appointment(_, res, next) {
+  const { id: physician_id } = res.locals.physician;
+  try {
+    const result = await physicianService.appointments(physician_id);
+    return res.status(200).send(result);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
+
 export default {
   create,
   get,
@@ -157,4 +169,5 @@ export default {
   cancelAppointment,
   confirmAppointment,
   query,
+  appointment,
 };
